@@ -92,6 +92,31 @@
             </div>
         </div>
 
+        <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
+            @auth()
+                <div class="text-3xl font-bold left-4 w-48 sm:w-fit">
+                    Available Tasks
+                </div>
+
+                @foreach($tasks as $task)
+                    <div class="flex justify-between bg-gray-100/50 border-y border-red-500/25 py-4 px-2">
+                        <div>
+                            <div class="font-bold">
+                                {{ $task->title }}
+                            </div>
+                            <div class="text-sm">
+                                Subtext example.
+                            </div>
+                        </div>
+
+                        <div class="font-bold text-red-500">
+                            + {{ $task->points }} pts
+                        </div>
+                    </div>
+                @endforeach
+            @endauth
+        </div>
+
         <div class="bg-white">
             <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
                 <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">

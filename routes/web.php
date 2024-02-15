@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -15,8 +16,12 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function (Request $request) {
+    $tasks = auth()->user()?->tasks ?? [];
+
+    return view('home', [
+        'tasks' => $tasks,
+    ]);
 });
 
 Route::get('/auth/redirect', function () {
