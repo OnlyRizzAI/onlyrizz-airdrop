@@ -15,6 +15,11 @@ class UserTask extends Pivot
         return !is_null($this->completed_at);
     }
 
+    public function isVerified(): bool
+    {
+        return !is_null($this->completed_at);
+    }
+
     public function verify(): void
     {
         // TODO

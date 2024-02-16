@@ -19,9 +19,47 @@ use Laravel\Socialite\Facades\Socialite;
 Route::get('/', function (Request $request) {
     $tasks = auth()->user()?->tasks ?? [];
 
-    return view('home', [
-        'tasks' => $tasks,
-    ]);
+    $tasks = \App\Models\Task::all();
+
+    $socials = [
+        [
+            'name' => 'Telegram',
+            'link' => 'https://t.me/OnlyRizzHQ',
+            'icon' => 'fab-telegram',
+        ],
+        [
+            'name' => 'Twitter',
+            'link' => 'https://twitter.com/OnlyRizzHQ',
+            'icon' => 'fab-x-twitter',
+        ],
+        [
+            'name' => 'Discord',
+            'link' => 'https://discord.com/invite/FNEP5ywd7T',
+            'icon' => 'fab-discord',
+        ],
+        [
+            'name' => 'Website',
+            'link' => 'https://onlyrizz.ai/',
+            'icon' => 'fas-link',
+        ],
+        [
+            'name' => 'Reddit',
+            'link' => 'https://www.reddit.com/r/OnlyRizzAI/',
+            'icon' => 'fab-reddit',
+        ],
+        [
+            'name' => 'Youtube',
+            'link' => 'https://www.youtube.com/@OnlyRizzHQ',
+            'icon' => 'fab-youtube',
+        ],
+        [
+            'name' => 'Telegram Announcements',
+            'link' => 'https://t.me/OnlyRizzAnnouncements',
+            'icon' => 'fab-telegram',
+        ],
+    ];
+
+    return view('home', compact('tasks', 'socials'));
 });
 
 Route::get('/auth/redirect', function () {

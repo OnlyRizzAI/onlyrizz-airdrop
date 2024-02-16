@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('help_text')->nullable();
             $table->integer('points')->default(0);
+            $table->string('link')->nullable();
             $table->jsonb('payload')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreignIdFor(Task::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
             $table->timestamp('completed_at')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
         });
     }
