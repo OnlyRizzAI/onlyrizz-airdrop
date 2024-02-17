@@ -103,11 +103,17 @@
                                 @endguest
 
                                 @auth()
-                                    @if(!auth()->user()->connectedWallet())
-                                        <button type="button" x-data @click="modal.open()" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold ring-2 ring-white/80">
-                                            Connect Wallet
-                                        </button>
-                                    @endif
+                                    <div class="flex flex-col">
+                                        <div class="mb-8">
+                                            Logged in as {{ auth()->user()->name }} <span class="mx-2">|</span> <a class="hover:underline" href="/auth/logout">Logout <x-fas-arrow-right class="inline w-4 h-4 ml-1" /></a>
+                                        </div>
+
+                                        @if(!auth()->user()->connectedWallet())
+                                            <button type="button" x-data @click="modal.open()" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold ring-2 ring-white/80">
+                                                Connect Wallet
+                                            </button>
+                                        @endif
+                                    </div>
                                 @endauth()
                             </div>
                         </div>

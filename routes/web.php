@@ -107,3 +107,8 @@ Route::post('/wallet/connect', function (Request $request) {
 Route::post('/tasks/complete/{id}', function (Request $request, int $id) {
     dd($request->user()->tasks()->find($id));
 });
+
+Route::get('/auth/logout', function () {
+    Auth::logout();
+    return redirect()->back();
+});
