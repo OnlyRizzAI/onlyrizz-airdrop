@@ -52,4 +52,9 @@ class User extends Authenticatable
             ->using(UserTask::class)
             ->withPivot(['completed_at', 'verified_at']);
     }
+
+    public function connectedWallet(): bool
+    {
+        return ! is_null($this->wallet_address);
+    }
 }

@@ -12,6 +12,13 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+        <script>
+            window.phpData = {
+                isAuthenticated: {{ $isTwitterConnected ? 'true' : 'false' }},
+                isWalletConnected: {{ $isWalletConnected ? 'true' : 'false' }},
+            };
+        </script>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased text-white bg-[#101920]">
@@ -41,11 +48,7 @@
                         @endforeach
                     </div>
                     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                        @guest()
-                            <a href="/auth/redirect" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold">
-                                Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
-                            </a>
-                        @endguest
+                        <!-- Login button? -->
                     </div>
                 </nav>
                 <!-- Mobile menu, show/hide based on menu open state. -->
@@ -98,6 +101,14 @@
                                         Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
                                     </a>
                                 @endguest
+
+                                @auth()
+                                    @if(!auth()->user()->connectedWallet())
+                                        <button type="button" x-data @click="modal.open()" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold ring-2 ring-white/80">
+                                            Connect Wallet
+                                        </button>
+                                    @endif
+                                @endauth()
                             </div>
                         </div>
                         <img src="https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80" alt="" class="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-36">
@@ -107,8 +118,14 @@
             </div>
         </div>
 
+        {{-- Used to POST address when account is connected --}}
+        <form id="walletConnectForm" action="/wallet/connect" method="POST" class="hidden">
+            @csrf
+            <input type="hidden" name="address">
+        </form>
+
         <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40 bg-[#101920]">
-            @auth()
+            @if(auth()->check() && $isWalletConnected)
                 <div class="text-3xl font-bold left-4 w-48 sm:w-fit mb-4">
                     Available Tasks
                 </div>
@@ -152,7 +169,7 @@
                         </div>
                     </div>
                 @endforeach
-            @endauth
+            @endif
         </div>
 
         <div class="bg-[#101920]">

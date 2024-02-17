@@ -90,6 +90,10 @@ Route::get('/auth/callback', function () {
 });
 
 Route::post('/wallet/connect', function (Request $request) {
+    if (!auth()->check()) {
+        abort(401);
+    }
+
     $validated = $request->validate([
         'address' => ['required', 'string'],
     ]);
