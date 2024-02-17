@@ -10,7 +10,9 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-        @vite('resources/css/app.css')
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased text-white bg-[#101920]">
         <div class="">
@@ -39,9 +41,11 @@
                         @endforeach
                     </div>
                     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                        <a href="/auth/redirect" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold">
-                            Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
-                        </a>
+                        @guest()
+                            <a href="/auth/redirect" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold">
+                                Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
+                            </a>
+                        @endguest
                     </div>
                 </nav>
                 <!-- Mobile menu, show/hide based on menu open state. -->
@@ -89,9 +93,11 @@
                                 Earn rewards for engaging.
                             </p>
                             <div class="mt-10 flex items-center gap-x-6">
-                                <a href="/auth/redirect" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold ring-2 ring-white/80">
-                                    Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
-                                </a>
+                                @guest()
+                                    <a href="/auth/redirect" class="flex items-center px-4 py-2 bg-[#ff1058] rounded-md text-white font-bold ring-2 ring-white/80">
+                                        Connect <span class="w-2"></span> @svg('fab-x-twitter', 'text-white w-6 h-6')
+                                    </a>
+                                @endguest
                             </div>
                         </div>
                         <img src="https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80" alt="" class="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-36">
@@ -102,33 +108,51 @@
         </div>
 
         <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40 bg-[#101920]">
-{{--            @auth()--}}
+            @auth()
                 <div class="text-3xl font-bold left-4 w-48 sm:w-fit mb-4">
                     Available Tasks
                 </div>
 
+                <form id="taskForm" method="POST" class="hidden">
+                    @csrf
+                </form>
+
                 @foreach($tasks as $task)
                     <div class="flex justify-between bg-[#1a1f24] rounded-lg border border-red-500/25 py-4 px-4 mb-4">
-                        <div>
-                            <div class="font-bold text-lg">
-                                {{ $task->title }}
-                            </div>
+                        <div @click="click">
+                            @if($task->link)
+                                <button type="button" class="flex items-center font-bold text-lg hover:underline" x-data @click.prevent="onTaskClicked({{ $task->id }})">
+                                    {{ $task->title }} <div class="w-3"></div> <x-fas-arrow-up-right-from-square class="w-4 h-4" />
+                                </button>
+                            @else
+                                <div class="font-bold text-lg">
+                                    {{ $task->title }}
+                                </div>
+                            @endif
 
-                            <div class="text-sm text-gray-200">
-                                Subtext example.
-                            </div>
+                            @if($task->help_text)
+                                <div class="text-sm text-gray-200">
+                                    {{ $task->help_text }}
+                                </div>
+                            @endif
 
-                            <div class="text-sm">
-                                Expires {{ (new \Carbon\Carbon($task->expires_at))->diffForHumans() }}
-                            </div>
+                            @if($task->pivot->isCompleted())
+                                <span class="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-400/20 mt-2">
+                                    Verification Pending
+                                </span>
+                            @else
+                                <div class="text-sm">
+                                    Expires {{ (new \Carbon\Carbon($task->expires_at))->diffForHumans() }}
+                                </div>
+                            @endif
                         </div>
 
-                        <div class="font-bold text-red-500">
+                        <div class="self-center font-bold text-red-500 text-xl">
                             + {{ $task->points }} pts
                         </div>
                     </div>
                 @endforeach
-{{--            @endauth--}}
+            @endauth
         </div>
 
         <div class="bg-[#101920]">

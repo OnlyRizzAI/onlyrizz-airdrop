@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class UserTask extends Pivot
 {
+    public $incrementing = true;
+
     protected $casts = [
         'completed_at' => 'datetime',
     ];

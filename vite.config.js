@@ -8,4 +8,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+
+    // https://github.com/laravel/vite-plugin/pull/42
+    server: {
+        hmr: {
+            host: 'localhost',
+        }
+    }
 });

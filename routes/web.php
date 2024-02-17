@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,10 +18,7 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 Route::get('/', function (Request $request) {
-    $tasks = auth()->user()?->tasks ?? [];
-
-    $tasks = \App\Models\Task::all();
-
+    // todo: move this somewhere else lol
     $socials = [
         [
             'name' => 'Telegram',
@@ -59,7 +57,11 @@ Route::get('/', function (Request $request) {
         ],
     ];
 
-    return view('home', compact('tasks', 'socials'));
+    $tasks = auth()->user()?->tasks ?? [];
+    $isTwitterConnected = auth()->user()?->twitter_id !== null;
+    $isWalletConnected = auth()->user()?->wallet_address !== null;
+
+    return view('home', compact('tasks', 'socials', 'isTwitterConnected', 'isWalletConnected'));
 });
 
 Route::get('/auth/redirect', function () {
@@ -80,5 +82,24 @@ Route::get('/auth/callback', function () {
 
     Auth::login($user);
 
-    return redirect('/dashboard');
+    // Assign some tasks to the user
+    $taskIds = Task::where('expires_at', '>=', now()->addHours(1))->pluck('id');
+    $user->tasks()->sync($taskIds);
+
+    return redirect('/');
+});
+
+Route::post('/wallet/connect', function (Request $request) {
+    $validated = $request->validate([
+        'address' => ['required', 'string'],
+    ]);
+
+    $request->user()->wallet_address = $validated['address'];
+    $request->user()->save();
+
+    return redirect()->back();
+});
+
+Route::post('/tasks/complete/{id}', function (Request $request, int $id) {
+    dd($request->user()->tasks()->find($id));
 });
